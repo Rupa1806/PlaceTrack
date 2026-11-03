@@ -1,0 +1,79 @@
+@{
+    var isAdmin = User.IsInRole("Admin");
+    var isStudent = User.IsInRole("Student");
+    var loggedIn = User.Identity != null && User.Identity.IsAuthenticated;
+    var action = (string)ViewContext.RouteData.Values["action"];
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] | PlaceTrack</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <header class="topbar">
+        <div class="topbar-inner">
+            <a class="brand" asp-controller="Home" asp-action="Index">
+                <span class="brand-mark"><i></i><i></i><i></i></span>PlaceTrack
+            </a>
+
+            <button class="nav-toggle" type="button" aria-label="Open menu" aria-expanded="false" data-nav-toggle>Menu</button>
+
+            <nav class="nav" data-nav>
+                @if (isAdmin)
+                {
+                    <a asp-controller="Admin" asp-action="Dashboard" class="@(action == "Dashboard" ? "active" : "")">Dashboard</a>
+                    <a asp-controller="Admin" asp-action="Companies" class="@(action == "Companies" ? "active" : "")">Companies</a>
+                    <a asp-controller="Admin" asp-action="Drives" class="@(action == "Drives" || action == "DriveForm" || action == "Applicants" ? "active" : "")">Drives</a>
+                    <a asp-controller="Admin" asp-action="Students" class="@(action == "Students" ? "active" : "")">Students</a>
+                }
+                else if (isStudent)
+                {
+                    <a asp-controller="Student" asp-action="Dashboard" class="@(action == "Dashboard" ? "active" : "")">Dashboard</a>
+                    <a asp-controller="Student" asp-action="Drives" class="@(action == "Drives" ? "active" : "")">Drives</a>
+                    <a asp-controller="Student" asp-action="MyApplications" class="@(action == "MyApplications" ? "active" : "")">My applications</a>
+                    <a asp-controller="Student" asp-action="Profile" class="@(action == "Profile" ? "active" : "")">Profile</a>
+                }
+
+                @if (loggedIn)
+                {
+                    <form asp-controller="Account" asp-action="Logout" method="post" class="nav-user">
+                        <span class="nav-name">@User.Identity.Name</span>
+                        <button type="submit" class="btn btn-ghost btn-sm">Log out</button>
+                    </form>
+                }
+                else
+                {
+                    <a asp-controller="Account" asp-action="Login" class="@(action == "Login" ? "active" : "")">Log in</a>
+                    <a asp-controller="Account" asp-action="Register" class="btn btn-primary btn-sm">Create account</a>
+                }
+            </nav>
+        </div>
+    </header>
+
+    <main class="page">
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success" role="status" data-autohide>@TempData["Success"]</div>
+        }
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-error" role="alert">@TempData["Error"]</div>
+        }
+
+        @RenderBody()
+    </main>
+
+    <footer class="footer">
+        <span>PlaceTrack. Built with ASP.NET Core MVC, Entity Framework Core and MySQL.</span>
+    </footer>
+
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

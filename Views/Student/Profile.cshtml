@@ -1,0 +1,67 @@
+@model ProfileVM
+@{
+    ViewData["Title"] = "My profile";
+}
+
+<div class="page-head">
+    <div>
+        <h1>My profile</h1>
+        <p class="muted">Your CGPA, backlogs and branch decide which drives you see. Keep them correct.</p>
+    </div>
+</div>
+
+<form asp-action="Profile" method="post" class="panel form-panel" novalidate>
+    <div asp-validation-summary="ModelOnly" class="form-error"></div>
+
+    <div class="form-grid">
+        <div class="field">
+            <label asp-for="FullName"></label>
+            <input asp-for="FullName" />
+            <span asp-validation-for="FullName" class="error"></span>
+        </div>
+        <div class="field">
+            <label>Roll number</label>
+            <input value="@Model.RollNo" disabled />
+        </div>
+        <div class="field span-2">
+            <label>Email</label>
+            <input value="@Model.Email" disabled />
+        </div>
+
+        <div class="field">
+            <label asp-for="Branch"></label>
+            <select asp-for="Branch" asp-items="@(new SelectList(Branches.All))"></select>
+            <span asp-validation-for="Branch" class="error"></span>
+        </div>
+        <div class="field">
+            <label asp-for="Cgpa">CGPA</label>
+            <input asp-for="Cgpa" type="number" step="0.01" min="0" max="10" />
+            <span asp-validation-for="Cgpa" class="error"></span>
+        </div>
+        <div class="field">
+            <label asp-for="Backlogs"></label>
+            <input asp-for="Backlogs" type="number" min="0" max="20" />
+            <span asp-validation-for="Backlogs" class="error"></span>
+        </div>
+        <div class="field">
+            <label asp-for="Phone"></label>
+            <input asp-for="Phone" type="tel" />
+            <span asp-validation-for="Phone" class="error"></span>
+        </div>
+        <div class="field span-2">
+            <label asp-for="Skills"></label>
+            <input asp-for="Skills" placeholder="C#, Java, SQL" />
+            <span asp-validation-for="Skills" class="error"></span>
+        </div>
+        <div class="field span-2">
+            <label asp-for="ResumeUrl"></label>
+            <input asp-for="ResumeUrl" placeholder="https://drive.google.com/..." />
+            <span asp-validation-for="ResumeUrl" class="error"></span>
+            <span class="hint">Paste a shareable link to your resume (Google Drive, OneDrive or your own site).</span>
+        </div>
+    </div>
+
+    <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Save profile</button>
+    </div>
+</form>

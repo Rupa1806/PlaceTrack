@@ -1,0 +1,72 @@
+@model List<Application>
+@{
+    var drive = (Drive)ViewBag.Drive;
+    var counts = (Dictionary<string, int>)ViewBag.Counts;
+    var filter = (string)ViewBag.Filter;
+    ViewData["Title"] = "Applicants";
+}
+
+<div class="page-head">
+    <div>
+        <h1>@drive.JobRole, @drive.Company.Name</h1>
+        <p class="muted">@drive.PackageLpa.ToString("0.##") LPA, @drive.Location. Change a status and it saves at once.</p>
+    </div>
+    <div class="head-actions">
+        <a class="btn btn-ghost" asp-action="ExportApplicants" asp-route-id="@drive.Id">Download CSV</a>
+        <a class="btn btn-ghost" asp-action="Drives">Back to drives</a>
+    </div>
+</div>
+
+<div class="chips">
+    <a class="chip @(string.IsNullOrEmpty(filter) ? "chip-on" : "")" asp-action="Applicants" asp-route-id="@drive.Id">All (@counts.Values.Sum())</a>
+    @foreach (var s in Statuses.All)
+    {
+        <a class="chip @(filter == s ? "chip-on" : "")" asp-action="Applicants" asp-route-id="@drive.Id" asp-route-status="@s">@s (@counts[s])</a>
+    }
+</div>
+
+<section class="panel">
+    @if (Model.Count == 0)
+    {
+        <div class="empty">
+            <h3>No applicants here</h3>
+            <p class="muted">When students apply (or match this filter) they appear in this list.</p>
+        </div>
+    }
+    else
+    {
+        <div class="table-wrap">
+            <table class="table">
+                <thead><tr><th>Student</th><th>Branch</th><th>CGPA</th><th>Backlogs</th><th>Applied</th><th>Status</th></tr></thead>
+                <tbody>
+                @foreach (var a in Model)
+                {
+                    var s = a.StudentProfile;
+                    <tr>
+                        <td><strong>@s.User.FullName</strong><br /><span class="muted small">@s.RollNo, @s.User.Email</span>
+                            @if (!string.IsNullOrEmpty(s.ResumeUrl)) { <br /><a class="small" href="@s.ResumeUrl" target="_blank" rel="noopener noreferrer">View resume</a> }
+else { <br /><span class="muted small">No resume link</span> }
+                        </td>
+                        <td>@s.Branch</td>
+                        <td>@s.Cgpa.ToString("0.00")</td>
+                        <td>@s.Backlogs</td>
+                        <td>@a.AppliedOn.ToLocalTime().ToString("dd MMM")</td>
+                        <td>
+                            <form asp-action="UpdateStatus" method="post" class="status-form">
+                                <input type="hidden" name="applicationId" value="@a.Id" />
+                                <select name="status" class="status-select status-@a.Status.ToLower()" data-autosubmit aria-label="Status for @s.User.FullName">
+                                    @foreach (var st in Statuses.All)
+                                    {
+                                        <option value="@st" selected="@(a.Status == st)">@st</option>
+                                    }
+                                </select>
+                                <noscript><button type="submit" class="btn btn-ghost btn-sm">Save</button></noscript>
+                            </form>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+</section>

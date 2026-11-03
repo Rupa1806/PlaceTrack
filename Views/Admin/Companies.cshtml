@@ -1,0 +1,62 @@
+@model List<Company>
+@{
+    ViewData["Title"] = "Companies";
+}
+
+<div class="page-head">
+    <div>
+        <h1>Companies</h1>
+        <p class="muted">@Model.Count companies. Add a company first, then create drives for it.</p>
+    </div>
+</div>
+
+<section class="panel">
+    <h2>Add a company</h2>
+    <form asp-action="AddCompany" method="post" class="inline-grid">
+        <div class="field">
+            <label for="name">Company name</label>
+            <input id="name" name="name" required maxlength="100" />
+        </div>
+        <div class="field">
+            <label for="industry">Industry</label>
+            <input id="industry" name="industry" maxlength="100" />
+        </div>
+        <div class="field">
+            <label for="website">Website</label>
+            <input id="website" name="website" maxlength="200" placeholder="https://" />
+        </div>
+        <button type="submit" class="btn btn-primary">Add company</button>
+    </form>
+</section>
+
+<section class="panel">
+    @if (Model.Count == 0)
+    {
+        <div class="empty"><h3>No companies yet</h3><p class="muted">Add the first one using the form above.</p></div>
+    }
+    else
+    {
+        <div class="table-wrap">
+            <table class="table">
+                <thead><tr><th>Company</th><th>Industry</th><th>Drives</th><th></th></tr></thead>
+                <tbody>
+                @foreach (var c in Model)
+                {
+                    <tr>
+                        <td><strong>@c.Name</strong>
+                            @if (!string.IsNullOrEmpty(c.Website)) { <br /><a class="small" href="@c.Website" target="_blank" rel="noopener">@c.Website</a> }
+                        </td>
+                        <td>@c.Industry</td>
+                        <td>@c.Drives.Count</td>
+                        <td class="actions">
+                            <form asp-action="DeleteCompany" asp-route-id="@c.Id" method="post" data-confirm="Delete @c.Name?">
+                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+</section>

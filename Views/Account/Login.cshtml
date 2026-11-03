@@ -1,0 +1,37 @@
+@model LoginVM
+@{
+    ViewData["Title"] = "Log in";
+}
+
+<section class="auth">
+    <div class="auth-card">
+        <h1>Log in</h1>
+        <p class="muted">Welcome back. Pick up where your applications left off.</p>
+
+        <form asp-action="Login" method="post" novalidate>
+            <input type="hidden" asp-for="ReturnUrl" />
+            <div asp-validation-summary="ModelOnly" class="form-error"></div>
+
+            <div class="field">
+                <label asp-for="Email">Email</label>
+                <input asp-for="Email" type="email" autocomplete="username" placeholder="you@college.edu" />
+                <span asp-validation-for="Email" class="error"></span>
+            </div>
+
+            <div class="field">
+                <label asp-for="Password">Password</label>
+                <div class="pw">
+                    <input asp-for="Password" type="password" autocomplete="current-password" />
+                    <button type="button" class="pw-toggle" data-toggle-password>Show</button>
+                </div>
+                <span asp-validation-for="Password" class="error"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block">Log in</button>
+        </form>
+
+        <p class="muted small">New here? <a asp-action="Register">Create a student account</a></p>
+    </div>
+
+  
+</section>

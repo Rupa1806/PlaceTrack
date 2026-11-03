@@ -1,0 +1,64 @@
+@model List<Drive>
+@{
+    ViewData["Title"] = "Drives";
+}
+
+<div class="page-head">
+    <div>
+        <h1>Drives</h1>
+        <p class="muted">Each drive carries its own eligibility rules. Students only see what they qualify for.</p>
+    </div>
+    <a class="btn btn-primary" asp-action="DriveForm">Create a drive</a>
+</div>
+
+<section class="panel">
+    @if (Model.Count == 0)
+    {
+        <div class="empty">
+            <h3>No drives yet</h3>
+            <p class="muted">Create the first drive and eligible students will see it right away.</p>
+            <a class="btn btn-primary" asp-action="DriveForm">Create a drive</a>
+        </div>
+    }
+    else
+    {
+        <div class="table-wrap">
+            <table class="table">
+                <thead>
+                    <tr><th>Drive</th><th>Package</th><th>Eligibility rules</th><th>Apply by</th><th>Applicants</th><th>State</th><th></th></tr>
+                </thead>
+                <tbody>
+                @foreach (var d in Model)
+                {
+                    bool expired = d.LastDate.Date < DateTime.Today;
+                    <tr>
+                        <td><strong>@d.JobRole</strong><br /><span class="muted small">@d.Company.Name, @d.Location</span></td>
+                        <td>@d.PackageLpa.ToString("0.##") LPA</td>
+                        <td class="small">
+                            CGPA @d.MinCgpa.ToString("0.0#") or more<br />
+                            Up to @d.MaxBacklogs backlog(s)<br />
+                            Branches: @d.AllowedBranches
+                        </td>
+                        <td>@d.LastDate.ToString("dd MMM yyyy")</td>
+                        <td><a asp-action="Applicants" asp-route-id="@d.Id">@d.Applications.Count applicants</a></td>
+                        <td>
+                            @if (!d.IsOpen) { <span class="badge badge-rejected">Closed</span> }
+                            else if (expired) { <span class="badge badge-applied">Expired</span> }
+                            else { <span class="badge badge-selected">Open</span> }
+                        </td>
+                        <td class="actions">
+                            <a class="btn btn-ghost btn-sm" asp-action="DriveForm" asp-route-id="@d.Id">Edit</a>
+                            <form asp-action="ToggleDrive" asp-route-id="@d.Id" method="post">
+                                <button type="submit" class="btn btn-ghost btn-sm">@(d.IsOpen ? "Close" : "Reopen")</button>
+                            </form>
+                            <form asp-action="DeleteDrive" asp-route-id="@d.Id" method="post" data-confirm="Delete this drive and all its applications?">
+                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+</section>

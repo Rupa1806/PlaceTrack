@@ -1,0 +1,47 @@
+@model DriveCard
+@{
+    var d = Model.Drive;
+    int daysLeft = (d.LastDate.Date - DateTime.Today).Days;
+    string search = (d.Company.Name + " " + d.JobRole + " " + d.Location).ToLower();
+}
+<article class="drive @(Model.IsEligible ? "" : "drive-locked")" data-drive data-search="@search" data-eligible="@(Model.IsEligible ? "1" : "0")">
+    <div class="drive-top">
+        <div>
+            <h3>@d.JobRole</h3>
+            <p class="muted">@d.Company.Name, @d.Location</p>
+        </div>
+        <div class="package">@d.PackageLpa.ToString("0.##")<small> LPA</small></div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(d.Description))
+    {
+        <p class="drive-desc">@d.Description</p>
+    }
+
+    <dl class="rules">
+        <div><dt>Minimum CGPA</dt><dd>@d.MinCgpa.ToString("0.0#")</dd></div>
+        <div><dt>Backlogs allowed</dt><dd>@d.MaxBacklogs</dd></div>
+        <div><dt>Branches</dt><dd>@d.AllowedBranches</dd></div>
+        <div><dt>Apply by</dt><dd>@d.LastDate.ToString("dd MMM") (@daysLeft day@(daysLeft == 1 ? "" : "s") left)</dd></div>
+    </dl>
+
+    <div class="drive-foot">
+        @if (Model.Applied)
+        {
+            <span class="badge badge-@Model.AppliedStatus.ToLower()">@Model.AppliedStatus</span>
+            <a class="small" asp-controller="Student" asp-action="MyApplications">Track it</a>
+        }
+        else if (Model.IsEligible)
+        {
+            <form asp-controller="Student" asp-action="Apply" method="post">
+                <input type="hidden" name="driveId" value="@d.Id" />
+                <button type="submit" class="btn btn-primary btn-sm">Apply now</button>
+            </form>
+            <span class="ok-note">You meet every rule</span>
+        }
+        else
+        {
+            <p class="why-not">@Model.Reason</p>
+        }
+    </div>
+</article>

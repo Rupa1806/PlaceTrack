@@ -1,0 +1,72 @@
+@model StudentDashboardVM
+@{
+    ViewData["Title"] = "My dashboard";
+    var p = Model.Profile;
+}
+
+<div class="page-head">
+    <div>
+        <h1>Hi, @p.User.FullName</h1>
+        <p class="muted">@p.RollNo, @p.Branch, CGPA @p.Cgpa.ToString("0.00"), @p.Backlogs backlog(s)</p>
+    </div>
+    <a class="btn btn-ghost" asp-action="Profile">Update profile</a>
+</div>
+
+<section class="stats">
+    <div class="stat stat-accent"><strong data-count="@Model.EligibleCount">@Model.EligibleCount</strong><span>drives you can apply to now</span></div>
+    <div class="stat"><strong data-count="@Model.AppliedCount">@Model.AppliedCount</strong><span>applications sent</span></div>
+    <div class="stat"><strong data-count="@Model.ShortlistedCount">@Model.ShortlistedCount</strong><span>shortlisted</span></div>
+    <div class="stat"><strong data-count="@Model.SelectedCount">@Model.SelectedCount</strong><span>offers</span></div>
+</section>
+
+<section class="section">
+    <div class="section-head">
+        <h2>Open for you</h2>
+        <a asp-action="Drives">See all drives</a>
+    </div>
+
+    @if (Model.TopDrives.Count == 0)
+    {
+        <div class="empty">
+            <h3>No new drives match you right now</h3>
+            <p class="muted">Check all drives to see what each company needs, or update your profile if your CGPA or backlogs changed.</p>
+            <a class="btn btn-primary" asp-action="Drives">Browse all drives</a>
+        </div>
+    }
+    else
+    {
+        <div class="drive-grid">
+            @foreach (var card in Model.TopDrives)
+            {
+                <partial name="_DriveCard" model="card" />
+            }
+        </div>
+    }
+</section>
+
+<section class="section">
+    <div class="section-head">
+        <h2>Latest on your applications</h2>
+        <a asp-action="MyApplications">See all</a>
+    </div>
+
+    @if (Model.Recent.Count == 0)
+    {
+        <div class="empty">
+            <h3>You have not applied yet</h3>
+            <p class="muted">Pick a drive above and apply. Its progress will show up here.</p>
+        </div>
+    }
+    else
+    {
+        <ul class="activity">
+            @foreach (var a in Model.Recent)
+            {
+                <li>
+                    <div><strong>@a.Drive.JobRole</strong> <span class="muted">at @a.Drive.Company.Name</span></div>
+                    <span class="badge badge-@a.Status.ToLower()">@a.Status</span>
+                </li>
+            }
+        </ul>
+    }
+</section>

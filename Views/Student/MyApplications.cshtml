@@ -1,0 +1,63 @@
+@model List<Application>
+@{
+    ViewData["Title"] = "My applications";
+}
+
+<div class="page-head">
+    <div>
+        <h1>My applications</h1>
+        <p class="muted">Each application moves along the line as the placement cell reviews it.</p>
+    </div>
+    <a class="btn btn-primary" asp-action="Drives">Find more drives</a>
+</div>
+
+@if (Model.Count == 0)
+{
+    <div class="empty">
+        <h3>No applications yet</h3>
+        <p class="muted">Open the drives page, pick a drive you qualify for and apply.</p>
+        <a class="btn btn-primary" asp-action="Drives">Browse drives</a>
+    </div>
+}
+else
+{
+    <div class="app-list">
+        @foreach (var a in Model)
+        {
+            bool rejected = a.Status == Statuses.Rejected;
+            int stage = a.Status == Statuses.Selected ? 3 : a.Status == Statuses.Shortlisted ? 2 : 1;
+            <article class="app-card">
+                <div class="app-head">
+                    <div>
+                        <h3>@a.Drive.JobRole</h3>
+                        <p class="muted">@a.Drive.Company.Name, @a.Drive.Location, @a.Drive.PackageLpa.ToString("0.##") LPA</p>
+                    </div>
+                    <span class="badge badge-@a.Status.ToLower()">@a.Status</span>
+                </div>
+
+                <ol class="tracker @(rejected ? "tracker-rejected" : "")">
+                    <li class="step done"><span class="dot"></span><span class="step-name">Applied</span><span class="step-note">@a.AppliedOn.ToLocalTime().ToString("dd MMM")</span></li>
+                    <li class="step @(stage >= 2 ? "done" : "")"><span class="dot"></span><span class="step-name">Shortlisted</span></li>
+                    @if (rejected)
+                    {
+                        <li class="step failed"><span class="dot"></span><span class="step-name">Not selected</span><span class="step-note">@a.UpdatedOn.ToLocalTime().ToString("dd MMM")</span></li>
+                    }
+                    else
+                    {
+                        <li class="step @(stage >= 3 ? "done" : "")"><span class="dot"></span><span class="step-name">Selected</span>
+                            @if (stage >= 3) { <span class="step-note">@a.UpdatedOn.ToLocalTime().ToString("dd MMM")</span> }
+                        </li>
+                    }
+                </ol>
+
+                @if (a.Status == Statuses.Applied)
+                {
+                    <form asp-action="Withdraw" method="post" data-confirm="Withdraw this application?">
+                        <input type="hidden" name="applicationId" value="@a.Id" />
+                        <button type="submit" class="btn btn-ghost btn-sm">Withdraw application</button>
+                    </form>
+                }
+            </article>
+        }
+    </div>
+}

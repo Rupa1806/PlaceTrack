@@ -1,0 +1,86 @@
+@model DriveFormVM
+@{
+    bool isNew = Model.Id == 0;
+    ViewData["Title"] = isNew ? "Create a drive" : "Edit drive";
+}
+
+<div class="page-head">
+    <div>
+        <h1>@(isNew ? "Create a drive" : "Edit drive")</h1>
+        <p class="muted">The rules below decide which students can see and apply to this drive.</p>
+    </div>
+    <a class="btn btn-ghost" asp-action="Drives">Back to drives</a>
+</div>
+
+<form asp-action="DriveForm" method="post" class="panel form-panel" novalidate>
+    <input type="hidden" asp-for="Id" />
+    <div asp-validation-summary="ModelOnly" class="form-error"></div>
+
+    <h2>Job details</h2>
+    <div class="form-grid">
+        <div class="field">
+            <label asp-for="CompanyId"></label>
+            <select asp-for="CompanyId" asp-items="@((SelectList)ViewBag.Companies)">
+                <option value="">Choose company</option>
+            </select>
+            <span asp-validation-for="CompanyId" class="error"></span>
+        </div>
+        <div class="field">
+            <label asp-for="JobRole"></label>
+            <input asp-for="JobRole" />
+            <span asp-validation-for="JobRole" class="error"></span>
+        </div>
+        <div class="field">
+            <label asp-for="PackageLpa"></label>
+            <input asp-for="PackageLpa" type="number" step="0.05" min="0.5" />
+            <span asp-validation-for="PackageLpa" class="error"></span>
+        </div>
+        <div class="field">
+            <label asp-for="Location"></label>
+            <input asp-for="Location" />
+            <span asp-validation-for="Location" class="error"></span>
+        </div>
+        <div class="field span-2">
+            <label asp-for="Description"></label>
+            <textarea asp-for="Description" rows="3"></textarea>
+            <span asp-validation-for="Description" class="error"></span>
+        </div>
+    </div>
+
+    <h2>Who can apply</h2>
+    <div class="form-grid">
+        <div class="field">
+            <label asp-for="MinCgpa"></label>
+            <input asp-for="MinCgpa" type="number" step="0.1" min="0" max="10" />
+            <span asp-validation-for="MinCgpa" class="error"></span>
+        </div>
+        <div class="field">
+            <label asp-for="MaxBacklogs"></label>
+            <input asp-for="MaxBacklogs" type="number" min="0" max="20" />
+            <span asp-validation-for="MaxBacklogs" class="error"></span>
+        </div>
+        <div class="field">
+            <label asp-for="LastDate"></label>
+            <input asp-for="LastDate" type="date" />
+            <span asp-validation-for="LastDate" class="error"></span>
+        </div>
+        <div class="field span-2">
+            <span class="label">Allowed branches</span>
+            <div class="checks">
+                @foreach (var b in Branches.All)
+                {
+                    <label class="check">
+                        <input type="checkbox" name="SelectedBranches" value="@b" checked="@Model.SelectedBranches.Contains(b)" />
+                        <span>@b</span>
+                    </label>
+                }
+            </div>
+            <span class="hint">Tick the branches that can apply. Tick all (or none) to allow every branch.</span>
+        </div>
+    </div>
+
+    <div class="form-actions">
+        <button type="submit" class="btn btn-primary">@(isNew ? "Create drive" : "Save changes")</button>
+        <a class="btn btn-ghost" asp-action="Drives">Cancel</a>
+    </div>
+</form>

@@ -1,0 +1,64 @@
+@{
+    ViewData["Title"] = "Placement drives, tracked";
+}
+
+<section class="hero">
+    <div class="hero-copy">
+        <h1>Every placement drive, tracked from application to offer.</h1>
+        <p class="lead">
+            Students see only the drives they are eligible for, and know exactly where each application stands.
+            The placement cell runs everything from one place, with no spreadsheets and no WhatsApp groups.
+        </p>
+        <div class="hero-actions">
+            @if (User.Identity != null && User.Identity.IsAuthenticated)
+            {
+                <a class="btn btn-primary" asp-controller="@(User.IsInRole("Admin") ? "Admin" : "Student")" asp-action="Dashboard">Open my dashboard</a>
+            }
+            else
+            {
+                <a class="btn btn-primary" asp-controller="Account" asp-action="Register">Create student account</a>
+                <a class="btn btn-ghost" asp-controller="Account" asp-action="Login">Log in</a>
+            }
+        </div>
+    </div>
+
+    <!-- The signature visual: an application moving along, like a parcel being tracked -->
+    <aside class="track-demo" aria-label="Example of an application being tracked">
+        <div class="track-demo-head">
+            <strong>Data Analyst Trainee</strong>
+            <span>XYZ Company, Chennai, 6.0 LPA</span>
+        </div>
+        <ol class="tracker tracker-demo">
+            <li class="step"><span class="dot"></span><span class="step-name">Applied</span><span class="step-note">Mon</span></li>
+            <li class="step"><span class="dot"></span><span class="step-name">Shortlisted</span><span class="step-note">Wed</span></li>
+            <li class="step"><span class="dot"></span><span class="step-name">Selected</span><span class="step-note">Fri</span></li>
+        </ol>
+        <p class="track-demo-foot">You applied because your CGPA 8.4 and CSE branch met the rules.</p>
+    </aside>
+</section>
+
+<section class="numbers">
+    <div><strong data-count="@ViewBag.Students">@ViewBag.Students</strong><span>students</span></div>
+    <div><strong data-count="@ViewBag.Companies">@ViewBag.Companies</strong><span>companies</span></div>
+    <div><strong data-count="@ViewBag.OpenDrives">@ViewBag.OpenDrives</strong><span>open drives</span></div>
+    <div><strong data-count="@ViewBag.Offers">@ViewBag.Offers</strong><span>offers made</span></div>
+</section>
+
+<section class="two-col">
+    <div class="panel">
+        <h2>For students</h2>
+        <ul class="plain-list">
+            <li>See only the drives your CGPA, backlogs and branch qualify you for.</li>
+            <li>If you are not eligible, the page tells you exactly why.</li>
+            <li>Apply in one click and watch the status move: Applied, Shortlisted, Selected.</li>
+        </ul>
+    </div>
+    <div class="panel">
+        <h2>For the placement cell</h2>
+        <ul class="plain-list">
+            <li>Create a drive once, with the eligibility rules built in.</li>
+            <li>Review applicants, change their status and export the list to CSV.</li>
+            <li>See placement percentage, offers per company and branch results on a live dashboard.</li>
+        </ul>
+    </div>
+</section>

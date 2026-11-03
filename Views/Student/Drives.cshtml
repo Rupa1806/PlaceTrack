@@ -1,0 +1,47 @@
+@model List<DriveCard>
+@{
+    ViewData["Title"] = "Drives";
+    var profile = (StudentProfile)ViewBag.Profile;
+    int eligible = Model.Count(c => c.IsEligible);
+}
+
+<div class="page-head">
+    <div>
+        <h1>Drives</h1>
+        <p class="muted">
+            Checked against your profile: CGPA @profile.Cgpa.ToString("0.00"), @profile.Backlogs backlog(s), @profile.Branch.
+            You qualify for @eligible of @Model.Count open drives.
+        </p>
+    </div>
+    <a class="btn btn-ghost" asp-action="Profile">Update profile</a>
+</div>
+
+<div class="toolbar">
+    <input type="search" id="driveSearch" placeholder="Search company, role or city" aria-label="Search drives" />
+    <label class="check">
+        <input type="checkbox" id="onlyEligible" />
+        <span>Show only drives I can apply to</span>
+    </label>
+    <span class="muted small" id="driveCount" aria-live="polite"></span>
+</div>
+
+@if (Model.Count == 0)
+{
+    <div class="empty">
+        <h3>No open drives right now</h3>
+        <p class="muted">New drives from the placement cell will appear here.</p>
+    </div>
+}
+else
+{
+    <div class="drive-grid" id="driveGrid">
+        @foreach (var card in Model)
+        {
+            <partial name="_DriveCard" model="card" />
+        }
+    </div>
+    <div class="empty" id="noMatch" hidden>
+        <h3>Nothing matches your search</h3>
+        <p class="muted">Clear the search box or untick the eligibility filter.</p>
+    </div>
+}

@@ -1,0 +1,93 @@
+@model AdminDashboardVM
+@{
+    ViewData["Title"] = "Placement dashboard";
+}
+
+<div class="page-head">
+    <div>
+        <h1>Placement dashboard</h1>
+        <p class="muted">Live numbers from the database.</p>
+    </div>
+    <a class="btn btn-primary" asp-action="DriveForm">Create a drive</a>
+</div>
+
+<section class="stats">
+    <div class="stat"><strong data-count="@Model.TotalStudents">@Model.TotalStudents</strong><span>students registered</span></div>
+    <div class="stat stat-accent"><strong>@Model.PlacementPercent%</strong><span>placed (@Model.PlacedStudents of @Model.TotalStudents students)</span></div>
+    <div class="stat"><strong data-count="@Model.OpenDrives">@Model.OpenDrives</strong><span>open drives from @Model.TotalCompanies companies</span></div>
+    <div class="stat"><strong data-count="@Model.TotalApplications">@Model.TotalApplications</strong><span>applications received</span></div>
+</section>
+
+<section class="charts">
+    <div class="panel">
+        <h2>Applications by status</h2>
+        <div class="chart-box">
+            <canvas data-chart="doughnut" data-labels="@Model.Json(Model.StatusLabels)" data-values="@Model.Json(Model.StatusValues)"></canvas>
+        </div>
+        <ul class="legend">
+            @for (int i = 0; i < Model.StatusLabels.Count; i++)
+            {
+                <li><span class="badge badge-@Model.StatusLabels[i].ToLower()">@Model.StatusLabels[i]</span> @Model.StatusValues[i]</li>
+            }
+        </ul>
+    </div>
+
+    <div class="panel">
+        <h2>Offers per company</h2>
+        @if (Model.OfferLabels.Count == 0)
+        {
+            <p class="muted">No offers yet. They appear here when you mark an applicant as Selected.</p>
+        }
+        else
+        {
+            <div class="chart-box">
+                <canvas data-chart="bar" data-label="Offers" data-labels="@Model.Json(Model.OfferLabels)" data-values="@Model.Json(Model.OfferValues)"></canvas>
+            </div>
+        }
+    </div>
+
+    <div class="panel">
+        <h2>Placement percent by branch</h2>
+        @if (Model.BranchLabels.Count == 0)
+        {
+            <p class="muted">No students yet.</p>
+        }
+        else
+        {
+            <div class="chart-box">
+                <canvas data-chart="bar" data-label="Placed %" data-max="100" data-labels="@Model.Json(Model.BranchLabels)" data-values="@Model.Json(Model.BranchValues)"></canvas>
+            </div>
+        }
+    </div>
+</section>
+
+<section class="panel">
+    <h2>Latest activity</h2>
+    @if (Model.Recent.Count == 0)
+    {
+        <p class="muted">No applications yet.</p>
+    }
+    else
+    {
+        <div class="table-wrap">
+            <table class="table">
+                <thead><tr><th>Student</th><th>Drive</th><th>Status</th><th>Updated</th></tr></thead>
+                <tbody>
+                @foreach (var a in Model.Recent)
+                {
+                    <tr>
+                        <td>@a.StudentProfile.User.FullName<br /><span class="muted small">@a.StudentProfile.RollNo</span></td>
+                        <td>@a.Drive.JobRole<br /><span class="muted small">@a.Drive.Company.Name</span></td>
+                        <td><span class="badge badge-@a.Status.ToLower()">@a.Status</span></td>
+                        <td>@a.UpdatedOn.ToLocalTime().ToString("dd MMM, hh:mm tt")</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+</section>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+}
