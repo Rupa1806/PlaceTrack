@@ -8,6 +8,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- The tests live in their own project. Keep them out of the website project. -->
+    <Compile Remove="PlaceTrack.Tests/**" />
+    <Content Remove="PlaceTrack.Tests/**" />
+    <EmbeddedResource Remove="PlaceTrack.Tests/**" />
+    <None Remove="PlaceTrack.Tests/**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <!-- Pomelo = the "adapter" that lets Entity Framework Core talk to MySQL.
          It brings EF Core 9 with it. EF Core 9 runs fine on .NET 10. -->
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="9.0.0" />

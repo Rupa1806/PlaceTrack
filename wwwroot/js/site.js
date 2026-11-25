@@ -114,9 +114,9 @@
             return;
         }
 
-        var palette = ['#2447f5', '#e29a00', '#0f9d58', '#d63a3a', '#6a5acd', '#0891b2', '#c026d3', '#64748b'];
+        var palette = ['#4f46e5', '#f59e0b', '#10b981', '#ef4444', '#8b5cf6', '#06b6d4', '#d946ef', '#64748b'];
         // Status colours match the badges: Applied blue, Shortlisted amber, Selected green, Rejected red.
-        var statusColors = ['#2447f5', '#e29a00', '#0f9d58', '#d63a3a'];
+        var statusColors = ['#4f46e5', '#f59e0b', '#10b981', '#ef4444'];
 
         canvases.forEach(function (canvas) {
             var type = canvas.getAttribute('data-chart');
@@ -141,7 +141,7 @@
                         maintainAspectRatio: false,
                         plugins: { legend: { display: false } },
                         scales: {
-                            y: { beginAtZero: true, suggestedMax: max ? Number(max) : undefined, ticks: { precision: 0 }, grid: { color: '#eef1f6' } },
+                            y: { beginAtZero: true, suggestedMax: max ? Number(max) : undefined, ticks: { precision: 0 }, grid: { color: '#eceef8' } },
                             x: { grid: { display: false } }
                         }
                     }
